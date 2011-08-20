@@ -1,0 +1,19 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=PlasmaFreq
+ServiceTypes=Plasma/Applet
+Comment=Tool for quickly setting CPU frequency or power mode in Plasma desktop.
+Type=Service
+Icon=plasmafreq.svg
+
+X-Plasma-API=python
+X-Plasma-MainScript=code/main.py
+X-KDE-PluginInfo-Author=Sasu Karttunen
+X-KDE-PluginInfo-Email=sasu.karttunen@tpnet.fi
+X-KDE-PluginInfo-Name=plasmafreq
+X-KDE-PluginInfo-Version=0.1a
+X-KDE-PluginInfo-Website=http://github.com/skfin/plasmafreq
+X-KDE-PluginInfo-Category=Utilities
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

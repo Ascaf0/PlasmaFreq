@@ -1,0 +1,12 @@
+################ PlasmaFreq #################
+
+Author: Sasu Karttunen
+<sasu.karttunen@tpnet.fi>
+skfin @ freenode and ircnet
+
+PlasmaFreq is a plasmoid written in Python to
+quickly change power modes aka. governors of
+your CPU. To install PlasmaFreq, run:
+plasmapkg -i package.plasmoid
+
+PlasmaFreq is licensed under GNU GPL v3

@@ -15,5 +15,5 @@ X-KDE-PluginInfo-Version=0.1a
 X-KDE-PluginInfo-Website=http://github.com/skfin/plasmafreq
 X-KDE-PluginInfo-Category=Utilities
 X-KDE-PluginInfo-Depends=
-X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-License=GPLv3
 X-KDE-PluginInfo-EnabledByDefault=true

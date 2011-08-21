@@ -16,7 +16,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.48.1 r9760"
    version="1.0"
-   sodipodi:docname="cpu.svgz"
+   sodipodi:docname="plasmafreq.svg"
    inkscape:output_extension="org.inkscape.output.svgz.inkscape"
    inkscape:export-filename="/home/pinheiro/pics/oxygen-icons/scalable/devices/cpu.png"
    inkscape:export-xdpi="360"
@@ -52,7 +52,10 @@
        id="grid13595"
        spacingx="1px"
        spacingy="1px"
-       empspacing="2" />
+       empspacing="2"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
   </sodipodi:namedview>
   <defs
      id="defs1309">

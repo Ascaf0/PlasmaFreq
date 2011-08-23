@@ -21,13 +21,12 @@
 from PyQt4.QtCore import Qt, QFileSystemWatcher, QObject, SIGNAL
 from PyQt4.QtGui import QGraphicsLinearLayout, QButtonGroup, QSizePolicy
 from PyKDE4.plasma import Plasma
-from PyKDE4.kdecore import KAuth
-from PyKDE4.kdeui import KPasswordDialog
 from PyKDE4 import plasmascript
 
 from re import split
 from subprocess import call
-from os import devnull
+from os import devnull, path
+from glob import glob
 
 class PlasmaFreq(plasmascript.Applet):
     def __init__(self, parent, args=None):
@@ -53,7 +52,7 @@ class PlasmaFreq(plasmascript.Applet):
         frequenciesList.remove("\n")
         frequenciesFile.close()
         return frequenciesList
-
+    
     def currentFrequency(self):
         # Returns a string containing the current governor
         self.curFreqPath = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq"
@@ -68,7 +67,7 @@ class PlasmaFreq(plasmascript.Applet):
     def currentGovernor(self):
         self.curGovPath = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
         governorFile = open(self.curGovPath, 'r')
-        if self.curGovPath not in self.watcher.files(): # Not adding file to watcher in case of it exicsts already
+        if self.curGovPath not in self.watcher.files(): # Not adding file to watcher in case of it excists already
             self.watcher.addPath(self.curGovPath)
         currentGovernor = governorFile.read()
         currentGovernor = currentGovernor.rstrip() # Removes newline from string, since we don't need a list for this.
@@ -87,9 +86,10 @@ class PlasmaFreq(plasmascript.Applet):
         # We basically run a for-loop to try out that which radioButton is checked. Better ways warmly welcome.
         for x in self.availableGovernors:
             if self.radioButton[x].isChecked() == True: # radioButton for x governor is checked
+                cpufreqFiles = " ".join(self.cpufreqGovPath) # Converting list to space-separated string
                 governor = '"%s"' % x # Adding quotes to governor name
                 # Insert some variables to command. We should use KAuth instead of kdesudo but I have no idea how to use KAuth in python
-                cmd = "kdesudo -d -i %s --comment '<b>PlasmaFreq</b> need administrative priviledges. Please enter your password.' -c 'echo %s > %s'" % (self.icon, governor, self.curGovPath)
+                cmd = "kdesudo -i %s --comment '<b>PlasmaFreq</b> need administrative priviledges. Please enter your password.' -c 'echo %s | tee %s'" % (self.icon, governor, cpufreqFiles)
                 # Run the command. shell=True would be a security vulnerability (shell injection) if the cmd parameter would have something from user input
                 fnull = open(devnull, 'w') # Open /dev/null for stdout/stderr redirection
                 call(cmd, shell=True, stdout = fnull, stderr = fnull)
@@ -118,12 +118,20 @@ class PlasmaFreq(plasmascript.Applet):
         self.watcher = QFileSystemWatcher(self)
         QObject.connect(self.watcher,SIGNAL("fileChanged(const QString&)"), self.file_changed)
 
-#        # Initializing some variables and setting variables to them.
+        # Setting paths for cpufreq
+        self.cpuCores = glob(path.join("/sys/devices/system/cpu/", "cpu?")) # List all CPU cores
+        self.cpufreqGovPath = []
+        # This is going to be ugly...but hey, it works (at least if you dont have many physical CPUs. Cores are ok)
+        for x in self.cpuCores:
+            self.cpufreqGovPath.append(x + "/cpufreq/scaling_governor") # path.join doesn't work here, dunno why
+
+        # Initializing some variables and setting variables to them.
         self.availableFrequencies = self.listFrequencies()
         self.availableGovernors = self.listGovernors()
         self.currentGovernorStr = self.currentGovernor()
         self.currentFrequencyStr = self.currentFrequency()
         self.radioButton = {}
+
         # This contains texts and tooltips for RadioButtons
         self.governorTextsDict = {'conservative' : ['Conservative', 'Similiar to On Demand, but CPU clock speed switches gradually through all its available frequencies based on system load '],
                           'ondemand' : ['On Demand', 'Dynamically switches between the CPU available clock speeds based on system load '],

@@ -111,6 +111,7 @@ class PlasmaFreq(plasmascript.Applet):
         self.setGovernorBox = Plasma.GroupBox(self.applet)
         self.setGovernorBox.setText("Mode selection")
         self.setGovernorBox.setLayout(QGraphicsLinearLayout(Qt.Vertical,self.setGovernorBox))
+        self.setGovernorBox.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding))
         self.layout.addItem(self.setGovernorBox)
         self.governorGroup = QButtonGroup(self.applet) # Creating a abstract ButtonGroup in order to link RadioButtons together
 
@@ -144,6 +145,7 @@ class PlasmaFreq(plasmascript.Applet):
             self.radioButton[x] = Plasma.RadioButton(self.applet)
             self.radioButton[x].setText(self.governorTextsDict[x][0]) # Sets the text for radioButton from governorTextsDict above
             self.radioButton[x].setToolTip(self.governorTextsDict[x][1])
+            self.radioButton[x].setSizePolicy(QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred))
             self.governorGroup.addButton(self.radioButton[x].nativeWidget()) # We need to add radioButton's native widget
             self.setGovernorBox.layout().addItem(self.radioButton[x])
             if x == self.currentGovernorStr:

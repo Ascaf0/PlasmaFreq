@@ -83,13 +83,28 @@ class PlasmaFreq(plasmascript.Applet):
             self.currentFrequencyStr = self.currentFrequency()
 
     def applyChanges(self):
+
+        # With some Linux distros kdesudo is not default/not even available in official software repositories
+        kdesudoY = True
+        try:
+            call(["kdesudo", "--"])
+        except OSError:
+            kdesudoY = False
+        #kdesudoY := just a flag to change command in the cycle below while keeping changes to code separated
+        
         # We basically run a for-loop to try out that which radioButton is checked. Better ways warmly welcome.
         for x in self.availableGovernors:
             if self.radioButton[x].isChecked() == True: # radioButton for x governor is checked
                 cpufreqFiles = " ".join(self.cpufreqGovPath) # Converting list to space-separated string
-                governor = '"%s"' % x # Adding quotes to governor name
-                # Insert some variables to command. We should use KAuth instead of kdesudo but I have no idea how to use KAuth in python
-                cmd = "kdesudo -i %s --comment '<b>PlasmaFreq</b> need administrative priviledges. Please enter your password.' -c 'echo %s | tee %s'" % (self.icon, governor, cpufreqFiles)
+                if kdesudoY:
+                    governor = '"%s"' % x # Adding quotes to governor name
+                    # Insert some variables to command. We should use KAuth instead of kdesudo but I have no idea how to use KAuth in python
+                    cmd = "kdesudo -i %s --comment '<b>PlasmaFreq</b> need administrative priviledges. Please enter your password.' -c 'echo %s | tee %s'" % (self.icon, governor, cpufreqFiles)
+                else:
+                # no kdesudo: use kdesu in cmd
+                    governor = "%s" % x # Adding single (to work with kdesu + tee) quotes to governor name
+                    # Insert some variables to command. We should use KAuth instead of kdesu(do) but I have no idea how to use KAuth in python
+                    cmd = "kdesu -i %s -c 'echo %s | tee %s'" % (self.icon, governor, cpufreqFiles)
                 # Run the command. shell=True would be a security vulnerability (shell injection) if the cmd parameter would have something from user input
                 fnull = open(devnull, 'w') # Open /dev/null for stdout/stderr redirection
                 call(cmd, shell=True, stdout = fnull, stderr = fnull)
